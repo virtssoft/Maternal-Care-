@@ -59,3 +59,17 @@ export const analyzeSymptoms = async (symptoms: string[], week: number) => {
     return "Il est toujours préférable de noter ces symptômes et d'en parler à votre sage-femme lors de votre prochaine visite. Si la douleur est vive, consultez immédiatement.";
   }
 };
+
+export const getClinicalInsight = async (patientData: any) => {
+  try {
+    const response = await ai.models.generateContent({
+      model: 'gemini-3-flash-preview',
+      contents: `Analyse les données suivantes pour un prestataire de santé : 
+      Patiente : ${patientData.name}, Semaine : ${patientData.week}, Tension : ${patientData.bp}, Risque : ${patientData.risk}. 
+      Génère une note clinique concise (2 phrases) soulignant les points de vigilance prioritaires.`,
+    });
+    return response.text;
+  } catch (error) {
+    return "Surveillance standard recommandée. Vérifier la tension artérielle au prochain rendez-vous.";
+  }
+};

@@ -1,11 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
-import { User, UserRole, NavTab } from './types';
+import { User, UserRole, NavTab, Patient } from './types';
 import { MOCK_USERS } from './constants';
 import { BottomNav, SideDrawer } from './components/Navigation';
 import { ProviderHome } from './components/ProviderHome';
 import { PatientHome } from './components/PatientHome';
 import { PatientMonitoring } from './components/PatientMonitoring';
+import { ProviderMonitoring } from './components/ProviderMonitoring';
+import { ProviderPatientFile } from './components/ProviderPatientFile';
 import { AlertsView } from './components/AlertsView';
 import { LogIn, Menu as MenuIcon, User as UserIcon, Lock, HeartPulse } from 'lucide-react';
 
@@ -15,6 +17,9 @@ const App: React.FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // State for provider monitoring sub-view
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   // Simple login handler
   const handleLogin = (e: React.FormEvent) => {
@@ -32,7 +37,15 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setCurrentUser(null);
     setActiveTab('home');
+    setSelectedPatient(null);
   };
+
+  // Reset selected patient when changing tabs
+  useEffect(() => {
+    if (activeTab !== 'monitoring') {
+      setSelectedPatient(null);
+    }
+  }, [activeTab]);
 
   if (!currentUser) {
     return (
@@ -114,17 +127,13 @@ const App: React.FC = () => {
           ? <ProviderHome /> 
           : <PatientHome week={currentUser.pregnancyWeek || 24} />;
       case 'monitoring':
-        return currentUser.role === UserRole.FEMME_ENCEINTE
-          ? <PatientMonitoring week={currentUser.pregnancyWeek || 24} />
-          : (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-10 text-gray-400">
-              <div className="bg-gray-50 p-6 rounded-full mb-4">
-                  <MenuIcon size={48} />
-              </div>
-              <h2 className="text-xl font-bold text-gray-800">Dossiers Patientes</h2>
-              <p className="text-sm mt-2">Interface prestataire pour le suivi en cours de développement.</p>
-            </div>
-          );
+        if (currentUser.role === UserRole.FEMME_ENCEINTE) {
+          return <PatientMonitoring week={currentUser.pregnancyWeek || 24} />;
+        } else {
+          return selectedPatient 
+            ? <ProviderPatientFile patient={selectedPatient} onBack={() => setSelectedPatient(null)} />
+            : <ProviderMonitoring onSelectPatient={setSelectedPatient} />;
+        }
       case 'alerts':
         return <AlertsView role={currentUser.role} />;
       case 'profile':
@@ -146,20 +155,22 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col max-w-lg mx-auto shadow-2xl shadow-gray-200 overflow-x-hidden">
       {/* Top Header */}
-      <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-gray-100">
-        <button 
-          onClick={() => setIsDrawerOpen(true)}
-          className="p-2 -ml-2 hover:bg-rose-50 rounded-xl transition-colors text-gray-600"
-        >
-          <MenuIcon size={24} />
-        </button>
-        <div className="text-center">
-            <span className="text-lg font-black text-rose-500">MC</span>
-        </div>
-        <div className="w-10 h-10 rounded-full bg-rose-500 overflow-hidden border-2 border-white shadow-sm">
-            <img src={currentUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
-        </div>
-      </header>
+      {!selectedPatient && (
+        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-gray-100">
+          <button 
+            onClick={() => setIsDrawerOpen(true)}
+            className="p-2 -ml-2 hover:bg-rose-50 rounded-xl transition-colors text-gray-600"
+          >
+            <MenuIcon size={24} />
+          </button>
+          <div className="text-center">
+              <span className="text-lg font-black text-rose-500 uppercase tracking-tighter">Maternelle+</span>
+          </div>
+          <div className="w-10 h-10 rounded-full bg-rose-500 overflow-hidden border-2 border-white shadow-sm">
+              <img src={currentUser.avatar} alt="Avatar" className="w-full h-full object-cover" />
+          </div>
+        </header>
+      )}
 
       {/* Dynamic Content */}
       <main className="flex-1 overflow-y-auto">
