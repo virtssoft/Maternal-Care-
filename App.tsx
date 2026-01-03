@@ -10,7 +10,10 @@ import { ProviderMonitoring } from './components/ProviderMonitoring';
 import { ProviderPatientFile } from './components/ProviderPatientFile';
 import { PartogramForm } from './components/PartogramForm';
 import { AlertsView } from './components/AlertsView';
-import { LogIn, Menu as MenuIcon, HeartPulse, Sparkles, AlertCircle } from 'lucide-react';
+import { SettingsView } from './components/SettingsView';
+import { EducationView } from './components/EducationView';
+// Fixed missing Calendar icon import from lucide-react
+import { LogIn, Menu as MenuIcon, HeartPulse, Sparkles, AlertCircle, Calendar } from 'lucide-react';
 
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -52,6 +55,11 @@ const App: React.FC = () => {
   const handleStartPartogram = (patient: Patient) => {
     setSelectedPatient(patient);
     setIsViewingPartogram(true);
+  };
+
+  const handleDrawerNavigation = (tab: NavTab) => {
+    setActiveTab(tab);
+    setIsDrawerOpen(false);
   };
 
   if (!currentUser) {
@@ -150,7 +158,14 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-[#F8FAF7] flex flex-col lg:flex-row relative overflow-hidden">
       <DesktopSidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} userName={currentUser.name} />
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} />
-      <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} onLogout={handleLogout} userName={currentUser.name} userRole={currentUser.role} />
+      <SideDrawer 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+        onLogout={handleLogout} 
+        userName={currentUser.name} 
+        userRole={currentUser.role}
+        onNavigate={handleDrawerNavigation}
+      />
 
       <div className="flex-1 flex flex-col lg:ml-[280px] min-h-screen">
         <header className="lg:hidden px-6 py-6 flex justify-between items-center bg-transparent relative z-30">
@@ -179,13 +194,26 @@ const App: React.FC = () => {
           
           {activeTab === 'alerts' && <AlertsView role={currentUser.role} />}
           
-          {(activeTab === 'profile' || activeTab === 'calendar') && (
+          {activeTab === 'profile' && (
              <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-10 opacity-40">
                 <Sparkles size={64} className="text-[#7BAE7F] mb-6" />
-                <h2 className="text-2xl font-black text-gray-800 tracking-tight">Section {activeTab}</h2>
+                <h2 className="text-2xl font-black text-gray-800 tracking-tight">Mon Profil</h2>
                 <p className="text-[10px] uppercase font-black tracking-widest mt-2 text-gray-400">Édition des données bientôt disponible</p>
              </div>
           )}
+
+          {activeTab === 'calendar' && (
+             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-10 opacity-40">
+                <Calendar size={64} className="text-[#7BAE7F] mb-6" />
+                <h2 className="text-2xl font-black text-gray-800 tracking-tight">Calendrier</h2>
+                <p className="text-[10px] uppercase font-black tracking-widest mt-2 text-gray-400">Synchonisation en cours</p>
+             </div>
+          )}
+
+          {activeTab === 'settings' && <SettingsView type="settings" onBack={() => setActiveTab('home')} />}
+          {activeTab === 'language' && <SettingsView type="language" onBack={() => setActiveTab('home')} />}
+          {activeTab === 'privacy' && <SettingsView type="privacy" onBack={() => setActiveTab('home')} />}
+          {activeTab === 'help' && <EducationView onBack={() => setActiveTab('home')} />}
         </main>
       </div>
 

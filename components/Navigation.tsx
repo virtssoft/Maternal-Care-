@@ -67,6 +67,16 @@ export const DesktopSidebar: React.FC<NavProps> = ({ activeTab, setActiveTab, on
       </nav>
 
       <div className="mt-auto space-y-2 pt-8 border-t border-gray-50">
+        {DRAWER_ITEMS.filter(item => item.id !== 'logout').map(item => (
+           <button 
+            key={item.id}
+            onClick={() => setActiveTab(item.id as NavTab)}
+            className="w-full flex items-center space-x-4 p-4 rounded-2xl text-gray-400 hover:bg-gray-50 font-bold text-sm transition-all"
+           >
+             <item.icon size={20} />
+             <span>{item.label}</span>
+           </button>
+        ))}
         <button 
           onClick={onLogout}
           className="w-full flex items-center space-x-4 p-4 rounded-2xl text-red-400 hover:bg-red-50 font-bold text-sm transition-all"
@@ -79,7 +89,14 @@ export const DesktopSidebar: React.FC<NavProps> = ({ activeTab, setActiveTab, on
   );
 };
 
-export const SideDrawer: React.FC<{ isOpen: boolean; onClose: () => void; onLogout: () => void; userName: string; userRole: string; }> = ({ isOpen, onClose, onLogout, userName, userRole }) => {
+export const SideDrawer: React.FC<{ 
+  isOpen: boolean; 
+  onClose: () => void; 
+  onLogout: () => void; 
+  userName: string; 
+  userRole: string; 
+  onNavigate: (tab: NavTab) => void;
+}> = ({ isOpen, onClose, onLogout, userName, userRole, onNavigate }) => {
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 lg:hidden">
@@ -93,11 +110,22 @@ export const SideDrawer: React.FC<{ isOpen: boolean; onClose: () => void; onLogo
            <div className="w-12 h-12 rounded-2xl bg-[#7BAE7F]/10 flex items-center justify-center text-[#7BAE7F] font-bold">{userName.charAt(0)}</div>
            <div><p className="font-bold text-gray-800">{userName}</p><p className="text-xs text-gray-400 font-medium uppercase">{userRole}</p></div>
         </div>
-        <nav className="flex-1 space-y-2">
+        <nav className="flex-1 space-y-2 overflow-y-auto no-scrollbar">
            {DRAWER_ITEMS.map((item) => {
              const Icon = item.icon;
              return (
-               <button key={item.id} onClick={() => { if (item.id === 'logout') onLogout(); onClose(); }} className="w-full flex items-center space-x-4 p-4 rounded-2xl text-gray-600 font-bold text-sm hover:bg-gray-50 transition-all">
+               <button 
+                 key={item.id} 
+                 onClick={() => { 
+                   if (item.id === 'logout') {
+                     onLogout(); 
+                     onClose();
+                   } else {
+                     onNavigate(item.id as NavTab);
+                   }
+                 }} 
+                 className={`w-full flex items-center space-x-4 p-4 rounded-2xl font-bold text-sm hover:bg-gray-50 transition-all ${item.color || 'text-gray-600'}`}
+               >
                  <Icon size={20} /><span>{item.label}</span>
                </button>
              );

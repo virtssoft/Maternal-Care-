@@ -16,7 +16,7 @@ export interface User {
   dueDate?: string;
 }
 
-export type NavTab = 'home' | 'monitoring' | 'calendar' | 'alerts' | 'profile';
+export type NavTab = 'home' | 'monitoring' | 'calendar' | 'alerts' | 'profile' | 'settings' | 'language' | 'help' | 'privacy';
 
 export interface Alert {
   id: string;
@@ -27,6 +27,22 @@ export interface Alert {
   read: boolean;
 }
 
+export interface CPNVisit {
+  id: string;
+  date: string;
+  weight: number;
+  bp: string;
+  conjunctiva: 'colorées' | 'pâles';
+  fundalHeight: number;
+  fetalHeartRate: number;
+  fetalMovements: boolean;
+  presentation: 'sommet' | 'siège' | 'transverse' | 'N/A';
+  liquidLoss: 'non' | 'sang' | 'pus' | 'eaux';
+  albuminuria: '-' | '+' | '++';
+  glycosuria: '-' | '+' | '++';
+  treatments: string[];
+}
+
 export interface Patient {
   id: string;
   name: string;
@@ -35,4 +51,5 @@ export interface Patient {
   lastVisit: string;
   riskLevel: 'low' | 'medium' | 'high';
   photo: string;
+  visits?: CPNVisit[];
 }
