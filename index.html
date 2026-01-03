@@ -4,26 +4,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>MaternelleConnect - Suivi de Grossesse</title>
+  <title>MaternelleConnect</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary-green: #7BAE7F;
+      --bg-light: #F8FAF7;
+    }
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #fef2f2;
+      background-color: var(--bg-light);
       -webkit-tap-highlight-color: transparent;
       margin: 0;
+      color: #2D3748;
     }
-    .pb-safe {
-      padding-bottom: env(safe-area-inset-bottom);
-    }
-    ::-webkit-scrollbar {
-      width: 0px;
-    }
-    html, body {
-      max-width: 100%;
-      overflow-x: hidden;
-      height: 100%;
+    .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+    .rounded-4xl { border-radius: 2rem; }
+    ::-webkit-scrollbar { width: 0px; display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* Animations fluides */
+    .page-transition { animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 <script type="importmap">
@@ -43,7 +48,6 @@
 </head>
 <body class="antialiased">
   <div id="root"></div>
-  <!-- Le chemin doit être relatif au projet root pour Vite -->
   <script type="module" src="./index.tsx"></script>
 </body>
 </html>

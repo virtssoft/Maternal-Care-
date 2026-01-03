@@ -5,16 +5,24 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   define: {
-    // Polyfill pour process.env requis par le SDK Gemini
     'process.env': {
       API_KEY: process.env.API_KEY || ''
     }
   },
   build: {
     outDir: 'dist',
-    sourcemap: false
+    emptyOutDir: true,
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'recharts', 'lucide-react']
+        }
+      }
+    }
   },
   server: {
     port: 3000,
+    strictPort: true
   }
 });
