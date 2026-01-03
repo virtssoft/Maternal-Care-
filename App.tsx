@@ -8,6 +8,7 @@ import { PatientHome } from './components/PatientHome';
 import { PatientMonitoring } from './components/PatientMonitoring';
 import { ProviderMonitoring } from './components/ProviderMonitoring';
 import { ProviderPatientFile } from './components/ProviderPatientFile';
+import { PartogramForm } from './components/PartogramForm';
 import { AlertsView } from './components/AlertsView';
 import { LogIn, Menu as MenuIcon, HeartPulse, Sparkles, AlertCircle } from 'lucide-react';
 
@@ -20,6 +21,7 @@ const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [isViewingPartogram, setIsViewingPartogram] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,14 +44,19 @@ const App: React.FC = () => {
     setCurrentUser(null);
     setActiveTab('home');
     setSelectedPatient(null);
+    setIsViewingPartogram(false);
     setLoginPhone('');
     setLoginPin('');
+  };
+
+  const handleStartPartogram = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setIsViewingPartogram(true);
   };
 
   if (!currentUser) {
     return (
       <div className="min-h-screen bg-white flex flex-col md:flex-row overflow-hidden">
-        {/* Zone Visuelle - 40% sur mobile, 50% sur desktop */}
         <div className="relative h-[40vh] md:h-screen md:w-1/2 overflow-hidden shrink-0">
           <img 
             src="https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=1200" 
@@ -70,7 +77,6 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Zone Formulaire - 60% sur mobile, 50% sur desktop */}
         <div className="flex-1 flex items-center justify-center p-8 bg-[#F8FAF7] md:bg-white relative">
           <div className="w-full max-w-md bg-white md:bg-transparent p-12 rounded-[60px] md:p-0 shadow-2xl shadow-black/5 md:shadow-none -mt-20 md:mt-0 relative z-10 border border-gray-50 md:border-none">
             <div className="mb-12">
@@ -135,16 +141,18 @@ const App: React.FC = () => {
     );
   }
 
+  // Partogram View Override
+  if (isViewingPartogram) {
+    return <PartogramForm onBack={() => setIsViewingPartogram(false)} patientName={selectedPatient?.name} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#F8FAF7] flex flex-col lg:flex-row relative overflow-hidden">
-      {/* Adaptative Navigation */}
       <DesktopSidebar activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} userName={currentUser.name} />
       <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} onLogout={handleLogout} />
       <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} onLogout={handleLogout} userName={currentUser.name} userRole={currentUser.role} />
 
-      {/* Main Content Area */}
       <div className="flex-1 flex flex-col lg:ml-[280px] min-h-screen">
-        {/* Top Header - Visible on Mobile and Tablet only */}
         <header className="lg:hidden px-6 py-6 flex justify-between items-center bg-transparent relative z-30">
           <button onClick={() => setIsDrawerOpen(true)} className="p-3 bg-white rounded-2xl shadow-sm text-gray-400 border border-gray-50">
             <MenuIcon size={20} />
@@ -156,7 +164,6 @@ const App: React.FC = () => {
           <img src={currentUser.avatar} className="w-10 h-10 rounded-xl border-2 border-white shadow-sm" alt="Profile" />
         </header>
 
-        {/* Dynamic Screen View */}
         <main className="flex-1 overflow-y-auto page-transition pb-20 lg:pb-10">
           {activeTab === 'home' && (
             currentUser.role === UserRole.PRESTATAIRE 
@@ -167,7 +174,7 @@ const App: React.FC = () => {
           {activeTab === 'monitoring' && (
             currentUser.role === UserRole.FEMME_ENCEINTE 
             ? <PatientMonitoring week={currentUser.pregnancyWeek || 24} /> 
-            : (selectedPatient ? <ProviderPatientFile patient={selectedPatient} onBack={() => setSelectedPatient(null)} /> : <ProviderMonitoring onSelectPatient={setSelectedPatient} />)
+            : (selectedPatient ? <ProviderPatientFile patient={selectedPatient} onBack={() => setSelectedPatient(null)} /> : <ProviderMonitoring onSelectPatient={setSelectedPatient} onStartPartogram={handleStartPartogram} />)
           )}
           
           {activeTab === 'alerts' && <AlertsView role={currentUser.role} />}
@@ -182,7 +189,6 @@ const App: React.FC = () => {
         </main>
       </div>
 
-      {/* Global Background Accents */}
       <div className="fixed top-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#7BAE7F]/5 rounded-full blur-[120px] pointer-events-none z-0"></div>
       <div className="fixed bottom-[-10%] left-[-10%] w-[400px] h-[400px] bg-orange-500/5 rounded-full blur-[100px] pointer-events-none z-0"></div>
     </div>
