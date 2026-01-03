@@ -12,6 +12,7 @@
       font-family: 'Inter', sans-serif;
       background-color: #fef2f2;
       -webkit-tap-highlight-color: transparent;
+      margin: 0;
     }
     .pb-safe {
       padding-bottom: env(safe-area-inset-bottom);
@@ -19,10 +20,10 @@
     ::-webkit-scrollbar {
       width: 0px;
     }
-    /* Empêcher le défilement horizontal sur mobile */
     html, body {
       max-width: 100%;
       overflow-x: hidden;
+      height: 100%;
     }
   </style>
 <script type="importmap">
@@ -34,14 +35,15 @@
     "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
     "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
     "recharts": "https://esm.sh/recharts@^3.6.0",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "vite": "https://esm.sh/vite@^7.3.0"
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
 </head>
 <body class="antialiased">
   <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
+  <!-- Le chemin doit être relatif au projet root pour Vite -->
+  <script type="module" src="./index.tsx"></script>
 </body>
 </html>
