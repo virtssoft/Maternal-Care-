@@ -1,110 +1,126 @@
 
 import React, { useEffect, useState } from 'react';
 import { MOCK_PATIENTS } from '../constants';
-import { User, Users, AlertCircle, PlusCircle, Search, ArrowRight } from 'lucide-react';
+import { Users, Plus, Search, ChevronRight, Activity, Bell, MapPin, Clipboard } from 'lucide-react';
 import { getProviderDashboardSummary } from '../services/geminiService';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-
-const data = [
-  { name: 'Lun', patients: 12 },
-  { name: 'Mar', patients: 19 },
-  { name: 'Mer', patients: 15 },
-  { name: 'Jeu', patients: 22 },
-  { name: 'Ven', patients: 30 },
-];
 
 export const ProviderHome: React.FC = () => {
-  const [summary, setSummary] = useState<string>('Chargement de l\'aperçu IA...');
+  const [summary, setSummary] = useState<string>('Analyse clinique en cours...');
 
   useEffect(() => {
     getProviderDashboardSummary(124, 3).then(setSummary);
   }, []);
 
+  const stats = [
+    { label: 'Suivies aujourd\'hui', value: '18', icon: Users, color: 'bg-blue-50 text-blue-500' },
+    { label: 'Accouchements en cours', value: '03', icon: Activity, color: 'bg-orange-50 text-orange-500', alert: true },
+    { label: 'Alertes actives', value: '05', icon: Bell, color: 'bg-red-50 text-red-500', alert: true },
+    { label: 'Références envoyées', value: '02', icon: MapPin, color: 'bg-[#7BAE7F]/10 text-[#7BAE7F]' },
+  ];
+
   return (
-    <div className="space-y-6 pb-20 p-4 animate-in fade-in duration-500">
-      <header className="flex justify-between items-center">
+    <div className="pb-32 px-6 pt-6 max-w-7xl mx-auto">
+      {/* Header & Quick Actions */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Bonjour, Dr. Aminata</h1>
-          <p className="text-gray-500 text-sm">Prête pour les consultations du jour ?</p>
+          <h1 className="text-3xl font-black text-gray-900 tracking-tight">Tableau de Bord</h1>
+          <p className="text-sm font-medium text-gray-400 uppercase tracking-widest mt-1">Personnel de Santé</p>
         </div>
-        <button className="bg-rose-500 text-white p-3 rounded-full shadow-lg hover:bg-rose-600 transition-transform active:scale-95">
-          <PlusCircle size={24} />
-        </button>
-      </header>
-
-      {/* AI Summary Card */}
-      <div className="bg-gradient-to-br from-rose-500 to-rose-600 rounded-2xl p-5 text-white shadow-xl">
-        <div className="flex items-center space-x-2 mb-2">
-          <div className="bg-white/20 p-1.5 rounded-lg">
-            <Users size={18} />
-          </div>
-          <span className="text-sm font-semibold uppercase tracking-wider">Aperçu du Jour</span>
-        </div>
-        <p className="text-rose-50 font-medium leading-relaxed italic">
-          "{summary}"
-        </p>
-      </div>
-
-      {/* Stats Row */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-          <p className="text-xs text-gray-500 mb-1">Total Patientes</p>
-          <p className="text-2xl font-bold text-gray-800">124</p>
-          <div className="mt-2 text-green-500 text-[10px] font-bold">+5 cette semaine</div>
-        </div>
-        <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm">
-          <p className="text-xs text-gray-500 mb-1">Alertes Actives</p>
-          <p className="text-2xl font-bold text-rose-500">03</p>
-          <div className="mt-2 text-rose-400 text-[10px] font-bold italic">Urgence requise</div>
-        </div>
-      </div>
-
-      {/* Activity Chart */}
-      <div className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm h-64">
-        <h3 className="text-sm font-bold text-gray-700 mb-4">Volume de Consultations</h3>
-        <ResponsiveContainer width="100%" height="85%">
-          <BarChart data={data}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f0f0f0" />
-            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#999' }} />
-            <Tooltip 
-                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                cursor={{ fill: '#fff5f5' }}
-            />
-            <Bar dataKey="patients" radius={[4, 4, 0, 0]}>
-              {data.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={index === 4 ? '#f43f5e' : '#fda4af'} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-
-      {/* Patient List Snippet */}
-      <section>
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="font-bold text-gray-800">Patientes Critiques</h2>
-          <button className="text-rose-500 text-sm font-semibold flex items-center">
-            Voir tout <ArrowRight size={14} className="ml-1" />
+        <div className="flex space-x-3">
+          <button className="flex-1 md:flex-none flex items-center justify-center space-x-2 bg-[#7BAE7F] text-white px-6 py-4 rounded-[20px] font-black shadow-lg shadow-[#7BAE7F]/20 active:scale-95 transition-all">
+            <Plus size={20} strokeWidth={3} />
+            <span className="text-sm uppercase tracking-wider">Nouvelle Patiente</span>
+          </button>
+          <button className="p-4 bg-white border border-gray-100 rounded-[20px] text-gray-400 shadow-sm">
+            <Search size={24} />
           </button>
         </div>
-        <div className="space-y-3">
-          {MOCK_PATIENTS.map((patient) => (
-            <div key={patient.id} className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center">
-              <img src={patient.photo} alt={patient.name} className="w-12 h-12 rounded-full mr-4 object-cover" />
-              <div className="flex-1">
-                <h4 className="font-bold text-gray-800 text-sm">{patient.name}</h4>
-                <p className="text-xs text-gray-500">{patient.pregnancyWeek} sem. • Dernier: {patient.lastVisit}</p>
+      </div>
+
+      {/* IA Insight - Full width */}
+      <section className="mb-10">
+        <div className="bg-gray-900 rounded-[40px] p-8 text-white relative overflow-hidden shadow-2xl">
+           <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6">
+              <div className="w-16 h-16 bg-[#7BAE7F]/20 rounded-2xl flex items-center justify-center text-[#7BAE7F] flex-shrink-0">
+                 <Clipboard size={32} />
               </div>
-              <span className={`px-2 py-1 rounded-full text-[10px] font-bold uppercase ${
-                patient.riskLevel === 'high' ? 'bg-rose-100 text-rose-600' :
-                patient.riskLevel === 'medium' ? 'bg-amber-100 text-amber-600' : 'bg-green-100 text-green-600'
-              }`}>
-                {patient.riskLevel}
-              </span>
-            </div>
-          ))}
+              <div>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 mb-2 block">Assistant Clinique IA</span>
+                <p className="text-lg md:text-xl font-bold leading-relaxed italic text-gray-100">
+                  "{summary}"
+                </p>
+              </div>
+           </div>
+           <div className="absolute top-0 right-0 w-64 h-64 bg-[#7BAE7F]/10 rounded-full blur-[100px]"></div>
         </div>
       </section>
+
+      {/* Stats Grid - Responsive columns */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        {stats.map((s, i) => (
+          <div key={i} className="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm relative group hover:border-[#7BAE7F] transition-all">
+            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${s.color}`}>
+              <s.icon size={24} />
+            </div>
+            <p className="text-[10px] font-black text-gray-300 uppercase tracking-widest mb-1">{s.label}</p>
+            <p className="text-3xl font-black text-gray-900">{s.value}</p>
+            {s.alert && <div className="absolute top-6 right-6 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>}
+          </div>
+        ))}
+      </div>
+
+      {/* Main Content Areas - Two columns on Desktop */}
+      <div className="grid lg:grid-cols-3 gap-8">
+        {/* Recent Patients List */}
+        <section className="lg:col-span-2">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-black text-gray-900 tracking-tight">Dernières Consultations</h2>
+            <button className="text-[#7BAE7F] text-xs font-black uppercase tracking-widest">Voir Tout</button>
+          </div>
+          <div className="space-y-4">
+            {MOCK_PATIENTS.map((p) => (
+              <div key={p.id} className="bg-white p-5 rounded-[32px] border border-gray-100 flex items-center hover:shadow-md transition-all group">
+                <img src={p.photo} alt={p.name} className="w-16 h-16 rounded-2xl object-cover ring-4 ring-gray-50 mr-4" />
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-900 text-base">{p.name}</h4>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Sem. {p.pregnancyWeek}</span>
+                    <span className="w-1 h-1 bg-gray-200 rounded-full"></span>
+                    <span className={`text-[10px] font-black uppercase tracking-widest ${p.riskLevel === 'high' ? 'text-red-500' : 'text-[#7BAE7F]'}`}>
+                      Risque {p.riskLevel === 'high' ? 'Élevé' : 'Normal'}
+                    </span>
+                  </div>
+                </div>
+                <button className="p-3 bg-gray-50 text-gray-300 rounded-2xl group-hover:bg-[#7BAE7F] group-hover:text-white transition-all">
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Sidebar widgets (like Births in progress) */}
+        <section className="space-y-6">
+          <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm">
+            <h3 className="font-black text-gray-900 uppercase tracking-widest text-xs mb-6 flex items-center space-x-2">
+              <span className="w-2 h-2 bg-orange-500 rounded-full"></span>
+              <span>Partogrammes Actifs</span>
+            </h3>
+            <div className="space-y-4">
+              <div className="p-4 bg-orange-50 rounded-2xl border border-orange-100">
+                <p className="font-bold text-gray-800 text-sm">Fatouma B.</p>
+                <div className="flex justify-between items-end mt-2">
+                  <span className="text-[10px] font-black text-orange-600 uppercase">Dilatation 6cm</span>
+                  <span className="text-[10px] font-bold text-gray-400 italic">Dernier TV: 14:30</span>
+                </div>
+              </div>
+              <button className="w-full py-3 border-2 border-dashed border-gray-100 rounded-2xl text-gray-300 text-[10px] font-black uppercase tracking-widest hover:border-[#7BAE7F] hover:text-[#7BAE7F] transition-all">
+                Démarrer Partogramme
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
     </div>
   );
 };

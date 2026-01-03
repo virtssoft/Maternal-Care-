@@ -24,23 +24,27 @@ export const MOCK_USERS = [
     id: '1',
     name: 'Dr. Aminata Diallo',
     role: UserRole.PRESTATAIRE,
+    phone: '0991234567',
+    pin: '1234',
     email: 'provider@health.org',
     facility: 'Centre de Santé Reference - Bamako',
-    avatar: 'https://picsum.photos/seed/dr/200'
+    avatar: 'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=200'
   },
   {
     id: '2',
     name: 'Mariam Touré',
     role: UserRole.FEMME_ENCEINTE,
+    phone: '0841234567',
+    pin: '1234',
     email: 'mariam@example.com',
     pregnancyWeek: 24,
     dueDate: '2024-08-15',
-    avatar: 'https://picsum.photos/seed/patient/200'
+    avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e16fd3c?auto=format&fit=crop&q=80&w=200'
   }
 ];
 
 export const MOCK_PATIENTS = [
-  { id: 'p1', name: 'Fatou Keita', age: 26, pregnancyWeek: 12, lastVisit: '2024-03-20', riskLevel: 'low', photo: 'https://picsum.photos/seed/p1/100' },
-  { id: 'p2', name: 'Aicha Kone', age: 31, pregnancyWeek: 34, lastVisit: '2024-03-18', riskLevel: 'high', photo: 'https://picsum.photos/seed/p2/100' },
-  { id: 'p3', name: 'Safiata Traoré', age: 22, pregnancyWeek: 28, lastVisit: '2024-03-15', riskLevel: 'medium', photo: 'https://picsum.photos/seed/p3/100' },
+  { id: 'p1', name: 'Fatou Keita', age: 26, pregnancyWeek: 12, lastVisit: '2024-03-20', riskLevel: 'low', photo: 'https://i.pravatar.cc/150?u=fatou' },
+  { id: 'p2', name: 'Aicha Kone', age: 31, pregnancyWeek: 34, lastVisit: '2024-03-18', riskLevel: 'high', photo: 'https://i.pravatar.cc/150?u=aicha' },
+  { id: 'p3', name: 'Safiata Traoré', age: 22, pregnancyWeek: 28, lastVisit: '2024-03-15', riskLevel: 'medium', photo: 'https://i.pravatar.cc/150?u=safi' },
 ];
